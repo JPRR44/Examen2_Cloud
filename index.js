@@ -1,3 +1,4 @@
+// Juan Pablo Ramos Robles
 const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
 require('dotenv').config()
@@ -9,20 +10,22 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
   }),
   serviceUrl: process.env.url,
 });
-
-const analyzeParams = {
-  'url': 'www.ibm.com',
-  'features': {
-    'categories': {
-      'limit': 3
-    }
-  }
+const response = {
+  statusCode: 200,
+  body: JSON.stringify('Hello from Lambda!'),
 };
+exports.handler = async (event) => {
 
-naturalLanguageUnderstanding.analyze(analyzeParams)
-  .then(analysisResults => {
-    console.log(JSON.stringify(analysisResults, null, 2));
-  })
-  .catch(err => {
-    console.log('error:', err);
-  });
+  const analyzeParams = {
+    'text': event.historial_clinico
+  };
+
+  naturalLanguageUnderstanding.analyze(analyzeParams)
+    .then(analysisResults => {
+      return JSON.stringify(analysisResults, null, 2)
+    })
+    .catch(err => {
+      console.log('error:', err);
+      return err;
+    });
+};
